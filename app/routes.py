@@ -16,6 +16,9 @@ def ana_sayfa():
 @pages.route("/dashboard")
 def dashboard():
     return render_template("dashboard.html")
+@pages.route("/assistant")
+def assistant():
+    return render_template("assistant.html")
 
 
 @api.route("/sohbet", methods=["POST"])
