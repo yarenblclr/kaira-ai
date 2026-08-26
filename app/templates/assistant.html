@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaira AI Satış Asistanı</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f7f5f2;
+            color: #222;
+        }
+
+        .assistant-card {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 28px;
+        }
+
+        p {
+            color: #666;
+            line-height: 1.5;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 130px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            resize: vertical;
+            font-size: 15px;
+            margin-top: 15px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 15px;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #171717;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.88;
+        }
+
+        #aiCevap {
+            margin-top: 18px;
+            background: #f1efec;
+            padding: 18px;
+            border-radius: 8px;
+            line-height: 1.6;
+            min-height: 65px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="assistant-card">
+
+    <h2>Kaira AI Satış Asistanı</h2>
+
+    <p>
+        Kaira ürünleri ve toptan satış hakkında sorunuzu yazın.
+    </p>
+
+    <textarea
+        id="aiMesaj"
+        placeholder="Örneğin: Toptan kozmetik ürünleri hakkında bilgi almak istiyorum..."
+    ></textarea>
+
+    <button onclick="aiSor()">
+        AI Asistana Sor
+    </button>
+
+    <div id="aiCevap">
+        Merhaba, ben Kaira AI. Size nasıl yardımcı olabilirim?
+    </div>
+
+</div>
+
+
+<script>
+
+async function aiSor() {
+
+    const mesaj = document.getElementById("aiMesaj").value;
+    const cevapAlani = document.getElementById("aiCevap");
+
+    if (!mesaj.trim()) {
+        cevapAlani.innerText = "Lütfen önce bir soru yazın.";
+        return;
+    }
+
+    cevapAlani.innerText = "Kaira AI düşünüyor...";
+
+    try {
+
+        const response = await fetch("/api/sohbet", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                mesaj: mesaj
+            })
+        });
+
+        const data = await response.json();
+
+        cevapAlani.innerText =
+            data.cevap || data.hata || "Bir hata oluştu.";
+
+    } catch (error) {
+
+        cevapAlani.innerText =
+            "Sunucuya ulaşılamadı.";
+    }
+}
+
+</script>
+
+</body>
+</html>
