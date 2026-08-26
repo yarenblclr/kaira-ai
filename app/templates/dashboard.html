@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaira | Yönetim Paneli</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            color: #222;
+        }
+
+        header {
+            background: #171717;
+            color: white;
+            padding: 22px 7%;
+        }
+
+        .logo {
+            font-size: 26px;
+            letter-spacing: 5px;
+            font-weight: bold;
+        }
+
+        main {
+            width: 86%;
+            margin: 50px auto;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+        }
+
+        .aciklama {
+            color: #777;
+            margin-bottom: 30px;
+        }
+
+        .tablo-kutu {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            overflow-x: auto;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f2f2f2;
+        }
+
+        #durum {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">KAIRA</div>
+</header>
+
+<main>
+
+    <h1>Toptan Satış Yönetim Paneli</h1>
+
+    <p class="aciklama">
+        Web sitesi üzerinden gelen potansiyel müşteri ve
+        toptan satış talepleri.
+    </p>
+
+    <div id="durum">
+        Kayıtlar yükleniyor...
+    </div>
+
+    <div class="tablo-kutu">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>İsim</th>
+                    <th>Telefon</th>
+                    <th>Firma</th>
+                    <th>Ürün</th>
+                    <th>Talep</th>
+                    <th>Tarih</th>
+                </tr>
+            </thead>
+
+            <tbody id="leadTablosu">
+            </tbody>
+        </table>
+
+    </div>
+
+</main>
+
+
+<script>
+
+async function leadleriYukle() {
+
+    const tablo = document.getElementById("leadTablosu");
+    const durum = document.getElementById("durum");
+
+    try {
+
+        const response = await fetch("/api/leads");
+        const data = await response.json();
+
+        tablo.innerHTML = "";
+
+        if (!data.leads || data.leads.length === 0) {
+            durum.innerText = "Henüz kayıt bulunmuyor.";
+            return;
+        }
+
+        durum.innerText =
+            data.leads.length + " müşteri talebi bulundu.";
+
+        data.leads.forEach(function(lead) {
+
+            const satir = document.createElement("tr");
+
+            satir.innerHTML = `
+                <td>${lead.id}</td>
+                <td>${lead.isim || ""}</td>
+                <td>${lead.telefon || ""}</td>
+                <td>${lead.firma || ""}</td>
+                <td>${lead.urun_ilgisi || ""}</td>
+                <td>${lead.mesaj || ""}</td>
+                <td>${lead.tarih || ""}</td>
+            `;
+
+            tablo.appendChild(satir);
+        });
+
+    } catch (error) {
+
+        durum.innerText =
+            "Müşteri kayıtları yüklenemedi.";
+    }
+}
+
+
+leadleriYukle();
+
+</script>
+
+</body>
+</html>

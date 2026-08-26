@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaira | Toptan Kozmetik</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f7f5f2;
+            color: #222;
+        }
+
+        header {
+            background: #171717;
+            color: white;
+            padding: 22px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            letter-spacing: 5px;
+            font-weight: bold;
+        }
+
+        header span {
+            font-size: 13px;
+            color: #ccc;
+        }
+
+        .hero {
+            padding: 80px 8%;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 46px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            color: #666;
+            max-width: 650px;
+            margin: auto;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 84%;
+            max-width: 1100px;
+            margin: 0 auto 80px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 35px;
+            border-radius: 14px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 14px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 7px;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 7px;
+            background: #171717;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        #aiCevap {
+            background: #f3f1ee;
+            padding: 15px;
+            border-radius: 7px;
+            margin-top: 15px;
+            min-height: 60px;
+            line-height: 1.5;
+        }
+
+        #formSonuc {
+            margin-top: 15px;
+        }
+
+        @media (max-width: 750px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 34px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">KAIRA</div>
+    <span>B2B COSMETICS</span>
+</header>
+
+<section class="hero">
+    <h1>Toptan Kozmetik Çözümleri</h1>
+
+    <p>
+        Kaira ürünleri, toptan siparişler ve iş ortaklığı
+        hakkında bilgi alın. Yapay zekâ satış asistanımız
+        sorularınızı yanıtlasın veya doğrudan teklif talebi bırakın.
+    </p>
+</section>
+
+<section class="container">
+
+    <div class="card">
+        <h2>Kaira AI Satış Asistanı</h2>
+
+        <p>
+            Ürünlerimiz veya toptan satış hakkında sorunuzu yazın.
+        </p>
+
+        <textarea
+            id="aiMesaj"
+            placeholder="Örneğin: Toptan ürün almak istiyorum..."
+        ></textarea>
+
+        <button onclick="aiSor()">
+            AI Asistana Sor
+        </button>
+
+        <div id="aiCevap">
+            Merhaba, ben Kaira AI. Size nasıl yardımcı olabilirim?
+        </div>
+    </div>
+
+
+    <div class="card">
+        <h2>Toptan Teklif Al</h2>
+
+        <input
+            id="isim"
+            type="text"
+            placeholder="Adınız ve soyadınız"
+        >
+
+        <input
+            id="telefon"
+            type="text"
+            placeholder="Telefon numaranız"
+        >
+
+        <input
+            id="firma"
+            type="text"
+            placeholder="Firma adı"
+        >
+
+        <input
+            id="urun"
+            type="text"
+            placeholder="İlgilendiğiniz ürün"
+        >
+
+        <textarea
+            id="mesaj"
+            placeholder="Talebiniz / tahmini sipariş miktarı"
+        ></textarea>
+
+        <button onclick="leadGonder()">
+            Teklif Talebi Gönder
+        </button>
+
+        <div id="formSonuc"></div>
+    </div>
+
+</section>
+
+
+<script>
+
+async function aiSor() {
+
+    const mesaj = document.getElementById("aiMesaj").value;
+    const cevapAlani = document.getElementById("aiCevap");
+
+    if (!mesaj.trim()) {
+        cevapAlani.innerText = "Lütfen önce bir soru yazın.";
+        return;
+    }
+
+    cevapAlani.innerText = "Kaira AI düşünüyor...";
+
+    try {
+
+        const response = await fetch("/api/sohbet", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                mesaj: mesaj
+            })
+        });
+
+        const data = await response.json();
+
+        cevapAlani.innerText =
+            data.cevap || data.hata || "Bir hata oluştu.";
+
+    } catch (error) {
+
+        cevapAlani.innerText =
+            "Sunucuya ulaşılamadı.";
+    }
+}
+
+
+async function leadGonder() {
+
+    const sonuc = document.getElementById("formSonuc");
+
+    const bilgiler = {
+        isim: document.getElementById("isim").value,
+        telefon: document.getElementById("telefon").value,
+        firma: document.getElementById("firma").value,
+        urun_ilgisi: document.getElementById("urun").value,
+        mesaj: document.getElementById("mesaj").value
+    };
+
+    try {
+
+        const response = await fetch("/api/leads", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(bilgiler)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            sonuc.innerText =
+                "Talebiniz alındı. Kaira ekibi sizinle iletişime geçecektir.";
+        } else {
+            sonuc.innerText =
+                data.hata || "Bilgiler kaydedilemedi.";
+        }
+
+    } catch (error) {
+
+        sonuc.innerText =
+            "Sunucuya ulaşılamadı.";
+    }
+}
+
+</script>
+
+</body>
+</html>
